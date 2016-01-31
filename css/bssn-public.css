@@ -1,0 +1,81 @@
+.bssn-top-level,
+.bssn-sub-level {
+  list-style: none;
+  position: relative;
+}
+
+.children.bssn-sub-level {
+  display: none;
+}
+
+/* Sub Level Toggles Shared Styles */
+.bssn-sub-level-toggle {
+  position: absolute;
+  margin-top: 1px;
+  right: 0px;
+  left: 120px;
+  overflow: hidden;
+  padding-left: 0;
+  padding-right: 0;
+  width: 50px;
+  text-align: center;
+  text-indent: 9999%;
+  cursor: pointer;
+  padding: 10px 0;
+}
+
+.bssn-sub-level-toggle .bssn-sub-level-toggle-span {
+   background-color: #535d65;
+}
+
+.bssn-sub-level-toggle .bssn-sub-level-toggle-span {
+  left: 31.5px;
+  width: 8px;
+  height: 1px;
+}
+
+.bssn-sub-level-toggle .bssn-sub-level-toggle-span.span-2 {
+  right: 12.5px;
+  left: auto;
+}
+
+.bssn-sub-level-toggle .bssn-sub-level-toggle-span {
+  left: 14px;
+  width: 10px;
+  height: 1px;
+}
+
+.bssn-sub-level-toggle .bssn-sub-level-toggle-span {
+  position: absolute;
+  width: 12px;
+  height: 2px;
+  /* transition: all 0.2s ease-in; */
+}
+
+.bssn-sub-level-toggle .bssn-sub-level-toggle-span.span-1 {
+  display: block;
+  left: 14.5px;
+  -webkit-transform: rotate(45deg) translate(2px);
+  transform: rotate(45deg) translate(2px);
+}
+
+.bssn-sub-level-toggle .bssn-sub-level-toggle-span.span-2 {
+  display: block;
+  right: 12.5px;
+  -webkit-transform: rotate(-45deg) translate(-2px);
+          transform: rotate(-45deg) translate(-2px);
+}
+
+.bssn-sub-level-toggle .bssn-sub-level-toggle-span.span-3 {
+  display: none;
+}
+
+.bssn-sub-level-toggle.bssn-toggled .bssn-sub-level-toggle-span.span-1 {
+  -webkit-transform: rotate(135deg) translate(-4px);
+          transform: rotate(135deg) translate(-2px);
+}
+
+.bssn-sub-level-toggle.bssn-toggled .bssn-sub-level-toggle-span.span-2 {
+  -webkit-transform: rotate(-135deg) translate(2px);
+          transform: rotate(-135deg) translate(2px);
+}
