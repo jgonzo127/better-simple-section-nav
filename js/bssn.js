@@ -2,7 +2,6 @@
 
 	$( document ).ready( function() {
 
-		var $this        = $( this );
 		var $list        = $( "ul.bssn-top-level" );
 		var $items       = $list.find( 'li' );
 		var $item        = $list
@@ -15,7 +14,7 @@
 
 		$list.addClass( 'top-level' );
 		$list.children().find( 'ul' ).addClass( 'bssn-sub-level' );
-		$( '.current_page_item' ).parents().show();
+		$( '.bssn-sub-level .current_page_item' ).parents().show();
 
 		$subList.each( function() {
 		  $( this ).find( 'a' ).first().after( toggle );

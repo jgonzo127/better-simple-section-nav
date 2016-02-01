@@ -8,12 +8,38 @@
   display: none;
 }
 
+.bssn-top-level {
+  padding: 0;
+  margin: 0 0 1.5625em;
+  position: relative;
+}
+
+.bssn-top-level li {
+    width: 100%;
+    padding: 0;
+    border-bottom: 1px dotted #E7ECF1;
+    margin: 0;
+    position: relative;
+}
+
+.bssn-top-level li a {
+    padding: 10px 15px;
+    display: block;
+}
+
+.bssn-top-level .page_item_has_children > a.bssn-sub-level-toggle {
+    padding: 10px 0;
+}
+
+.bssn .page_item_has_children > a {
+    padding-right: 50px;
+}
+
 /* Sub Level Toggles Shared Styles */
 .bssn-sub-level-toggle {
   position: absolute;
-  margin-top: 1px;
-  right: 0px;
-  left: 120px;
+  top: 10px;
+  right: 0;
   overflow: hidden;
   padding-left: 0;
   padding-right: 0;
@@ -21,7 +47,6 @@
   text-align: center;
   text-indent: 9999%;
   cursor: pointer;
-  padding: 10px 0;
 }
 
 .bssn-sub-level-toggle .bssn-sub-level-toggle-span {
@@ -34,7 +59,7 @@
   height: 1px;
 }
 
-.bssn-sub-level-toggle .bssn-sub-level-toggle-span.span-2 {
+.bssn-sub-level-toggle.bssn-sub-level-toggle-span.span-2 {
   right: 12.5px;
   left: auto;
 }
@@ -45,37 +70,88 @@
   height: 1px;
 }
 
-.bssn-sub-level-toggle .bssn-sub-level-toggle-span {
-  position: absolute;
-  width: 12px;
+.bssn-top-level.chevron .bssn-sub-level-toggle .bssn-sub-level-toggle-span {
+  left: 11.5px;
+  width: 10px;
   height: 2px;
-  /* transition: all 0.2s ease-in; */
+  position: absolute;
+  transition: all 0.2s ease-in;
 }
 
-.bssn-sub-level-toggle .bssn-sub-level-toggle-span.span-1 {
+.bssn-top-level.chevron .bssn-sub-level-toggle .bssn-sub-level-toggle-span.span-1 {
   display: block;
-  left: 14.5px;
+  left: 17.5px;
   -webkit-transform: rotate(45deg) translate(2px);
   transform: rotate(45deg) translate(2px);
 }
 
-.bssn-sub-level-toggle .bssn-sub-level-toggle-span.span-2 {
+.bssn-top-level.chevron .bssn-sub-level-toggle .bssn-sub-level-toggle-span.span-2 {
   display: block;
+  left: 14px;
   right: 12.5px;
   -webkit-transform: rotate(-45deg) translate(-2px);
-          transform: rotate(-45deg) translate(-2px);
+  transform: rotate(-45deg) translate(-2px);
 }
 
 .bssn-sub-level-toggle .bssn-sub-level-toggle-span.span-3 {
   display: none;
 }
 
-.bssn-sub-level-toggle.bssn-toggled .bssn-sub-level-toggle-span.span-1 {
-  -webkit-transform: rotate(135deg) translate(-4px);
-          transform: rotate(135deg) translate(-2px);
+.bssn-top-level.chevron .bssn-sub-level-toggle.bssn-toggled .bssn-sub-level-toggle-span.span-1 {
+  -webkit-transform: rotate(135deg) translate(0,-2px);
+          transform: rotate(135deg) translate(0,-2px);
 }
 
-.bssn-sub-level-toggle.bssn-toggled .bssn-sub-level-toggle-span.span-2 {
-  -webkit-transform: rotate(-135deg) translate(2px);
-          transform: rotate(-135deg) translate(2px);
+.bssn-top-level.chevron .bssn-sub-level-toggle.bssn-toggled .bssn-sub-level-toggle-span.span-2 {
+  -webkit-transform: rotate(-135deg) translate(0,-2px);
+          transform: rotate(-135deg) translate(0,-2px);
+}
+
+.bssn-top-level.plus-minus .bssn-sub-level-toggle.bssn-toggled .bssn-sub-level-toggle-span.span-2 {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+
+.bssn-top-level.plus-minus .bssn-sub-level-toggle.bssn-toggled .bssn-sub-level-toggle-span.span-1 {
+  height: 1px;
+}
+
+.bssn-top-level.plus-minus .bssn-sub-level-toggle .bssn-sub-level-toggle-span {
+    position: absolute;
+    top: 12px;
+    left: 16.5px;
+    width: 13px;
+    height: 2px;
+    transition: all 0.2s ease-out;
+}
+
+.bssn-top-level.plus-minus .bssn-sub-level-toggle .bssn-sub-level-toggle-span.span-1 {
+    display: block;
+}
+
+.bssn-top-level.plus-minus .bssn-sub-level-toggle .bssn-sub-level-toggle-span.span-2 {
+    display: block;
+    left: 17px;
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+
+@media screen and (min-width: 48em) {
+
+  .bssn-sub-level-toggle .bssn-sub-level-toggle-span {
+      left: 14px;
+      width: 10px;
+      height: 1px;
+  }
+
+  .bssn-top-level.chevron .bssn-sub-level-toggle .bssn-sub-level-toggle-span {
+    width: 9px;
+    height: 1px;
+  }
+
+  .bssn-top-level.plus-minus .bssn-sub-level-toggle .bssn-sub-level-toggle-span {
+    left: 17.5px;
+  }
+
 }

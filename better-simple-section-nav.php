@@ -1,27 +1,210 @@
 <?php
+
+/*
+Plugin Name: Better Simple Section Navigation
+Plugin URI:http://jgonzo127.com
+Description: Simple section navigation with sub page dropdown functionality.
+Version: 1.0.0
+Author:  Jordan Gonzales
+Author URI: http://jgonzo127.com
+License:
+*/
+
+define( 'BSSN_VERSION', '1.0.0' );
+define( 'BSSN_PATH', plugin_dir_path( __FILE__ ) );
+define( 'BSSN_URL', plugin_dir_url( __FILE__ ) );
+
+// Include general functionality.
+require_once BSSN_PATH . 'functions.php';
+
+// Include widget base class.
+require_once BSSN_PATH . 'classes/class-bssn-widget.php';
+
+add_action( 'wp_enqueue_scripts', 'bssn_scripts_and_styles' );
 /**
- * Better Simple Section Nav Widget Class.
- *
- * This class is designed for sub-classing. It extends the main WP_Widget
- * class with functions to output various field types.
+ * Enqueue front-end scripts and styles.
  *
  * @since  1.0.0
  */
-class Better_Simple_Section_Nav_Widget extends WP_Widget {
+function bssn_scripts_and_styles() {
+
+	// General styles.
+	wp_enqueue_style(
+		'better-simple-section-nav',
+		BSSN_URL . 'css/bssn-public.css',
+		array(),
+		BSSN_VERSION
+	);
+
+	// General scripts.
+	wp_enqueue_script(
+		'better-simple-section-nav',
+		BSSN_URL . 'js/bssn.js',
+		array( 'jquery' ),
+		BSSN_VERSION,
+		true
+	);
+}
+
+add_shortcode( 'better_simple_section_nav', 'bssn_shortcode' );
+/**
+ * Better Simple Section Nav shortcode.
+ *
+ * @since  1.0.0
+ *
+ * @param   array  $atts  Shortcode attributes.
+ *
+ * @return  string        Shortcode output.
+ */
+function bssn_shortcode( $atts = array(), $content = null ) {
+
+	if ( $content ) {
+		$atts['toggle_icon'] = $content;
+	}
+
+	return bssn_shortcode( $atts );
+}
+
+add_action('widgets_init', 'bssn_register_widget' );
+/**
+ * Register the bssn widget.
+ *
+ * @since 1.0.0
+ */
+function bssn_register_widget() {
+
+	register_widget( 'better_simple_section_nav' );
+}
+
+/**
+ * Better Simple Section Nav widget.
+ *
+ * @since 1.0.0
+ */
+class Better_Simple_Section_Nav extends WP_Widget {
 
 	/**
-	 * Initialize an instance of the parent class.
+	 * Global options for this widget.
 	 *
-	 * @since  1.0.0
+	 * @since 1.0.0
 	 */
-	public function __construct( $id_base, $name, $widget_options = array(), $control_options = array() ) {
+	protected $options;
+
+	/**
+	 * Initalize an instance of the widget.
+	 *
+	 * @since 1.0.0
+	 */
+	public function __construct() {
+
+		// Set up the options to pass to the WP_Widget constructor.
+		$this->options = array(
+			'classname'   => 'better-simple-section-nav',
+			'description' => __( 'Better Simple Section Nav', 'better-simple-section-nav' ),
+		);
 
 		parent::__construct(
-			$id_base,
-			$name,
-			$widget_options,
-			$control_options
+			'better_simple_section_nav',
+			__( 'Better Simple Section Nav', 'better-simple-section-nav' ),
+			$this->options
 		);
+	}
+
+	/**
+	 * Output the widget.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param  array  $args      The global options for the widget.
+	 * @param  array  $instance  The options for the widget instance.
+	 */
+	public function widget( $args, $instance ) {
+
+		// At this point, all instance options have been sanitized.
+		$title = apply_filters( 'widget_title', $instance['title'] );
+
+		echo $args['before_widget'];
+
+		if ( ! empty( $title ) ) {
+			echo $args['before_title'] . $title . $args['after_title'];
+		}
+
+		echo bssn_the_sub_page_nav( $instance );
+
+		echo $args['after_widget'];
+
+	}
+
+	/**
+	 * Output the Widgets settings form.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param  array  $instance  The options for the widget instance.
+	 */
+	public function form( $instance ) {
+
+		$instance = wp_parse_args( (array) $instance, $this->defaults );
+
+		$defaults = array(
+			'title'       => '',
+			'toggle_icon' => 'chevron',
+			'link_title'  => true,
+ 		);
+
+		$title       = $instance['title'];
+		$toggle_icon = $instance['toggle_icon'];
+		$link_title  = $instance['link_title'];
+
+		// Title.
+		$this->field_text(
+			__( 'Title', 'better-simple-section-nav' ),
+			'',
+			'bssn-title widefat',
+			'title',
+			$title
+		);
+
+		// Toggle Icon.
+		$this->field_select(
+			__( 'Toggle Icon', 'better-simple-section-nav' ),
+			'',
+			'bssn-toggle-icon widefat',
+			'toggle_icon',
+			$toggle_icon,
+			array(
+				'chevron'    => __( 'Chevron', 'better-simple-section-nav' ),
+				'plus-minus' => __( 'Plus/Minus', 'better-simple-section-nav' ),
+			)
+		);
+
+		// Link Title.
+		$this->field_checkbox(
+			__( 'Link Top Level Page?', 'better-simple-section-nav' ),
+			'',
+			'bssn-link-title widefat',
+			'link_title',
+			$link_title
+		);
+	}
+
+	/**
+	 * Update the widget settings.
+	 *
+	 * @since 1.0.0
+	 * @param  array  $new_instnace  The new settings for the widget instance.
+	 * @param  array  $old_instance  The old settings for the widget instance.
+	 *
+	 * @return  array  The sanitized settings.
+	 */
+	public function update( $new_instance, $old_instance ) {
+
+		$instance                = $old_instance;
+		$instance['title']       = wp_kses_post( $new_instance['title'] );
+		$instance['toggle_icon'] = sanitize_text_field( $new_instance['toggle_icon'] );
+		$instance['link_title']  = sanitize_text_field( $new_instance['link_title'] );
+
+		return $instance;
 	}
 
 	/**
@@ -298,5 +481,4 @@ class Better_Simple_Section_Nav_Widget extends WP_Widget {
 
 		echo '</p>';
 	}
-
 }
