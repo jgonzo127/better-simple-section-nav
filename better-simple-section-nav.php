@@ -17,9 +17,6 @@ define( 'BSSN_URL', plugin_dir_url( __FILE__ ) );
 // Include general functionality.
 require_once BSSN_PATH . 'functions.php';
 
-// Include widget base class.
-require_once BSSN_PATH . 'classes/class-bssn-widget.php';
-
 add_action( 'wp_enqueue_scripts', 'bssn_scripts_and_styles' );
 /**
  * Enqueue front-end scripts and styles.
@@ -59,7 +56,7 @@ add_shortcode( 'better_simple_section_nav', 'bssn_shortcode' );
 function bssn_shortcode( $atts = array(), $content = null ) {
 
 	if ( $content ) {
-		$atts['toggle_icon'] = $content;
+		$atts['content'] = $content;
 	}
 
 	return bssn_shortcode( $atts );
