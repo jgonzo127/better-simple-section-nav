@@ -13,15 +13,20 @@ function bssn_output_the_sub_page_nav( $args = array() ) {
 
 	// Set our defaults and use them as needed.
 	$defaults = array(
-		'title'       => '',
-		'toggle_icon' => '',
-		'link_title'  => '',
+		'title'       	 => '',
+		'toggle_icon' 	 => '',
+		'link_title'  	 => '',
+		'hide_toggle' 	 => '',
+		'show_sub_pages' => '',
 	);
 	$args = wp_parse_args( (array)$args, $defaults );
 
-	$title       = $args['title'];
-	$toggle_icon = $args['toggle_icon'];
-	$link_title  = $args['link_title'];
+	$title       	= $args['title'];
+	$toggle_icon 	= $args['toggle_icon'];
+	$exclude     	= $args['exclude'];
+	$link_title  	= $args['link_title'];
+	$hide_toggle 	= $args['hide_toggle'];
+	$show_sub_pages = $args['show_sub_pages'];
 
 	global $post;
 
@@ -31,6 +36,8 @@ function bssn_output_the_sub_page_nav( $args = array() ) {
 	}
 
 	$output   = '';
+	$post_ancestors = ( isset( $post->ancestors ) ) ? $post->ancestors : get_post_ancestors( $post );
+	$excluded = explode( ',', $exclude );
 
 	// Find the top level page id.
 	if ( ! $post->post_parent ) {
@@ -72,6 +79,19 @@ function bssn_output_the_sub_page_nav( $args = array() ) {
 				'bssn-title',
 				get_the_title( $top_page_id )
 			);
+		}
+
+		if ( in_array( $post->ID, $excluded ) ) {
+
+			return false;
+		}
+
+		if ( $hide_toggle ) {
+			$toggle_icon = 'hidden';
+		}
+
+		if( $show_sub_pages ) {
+			$toggle_icon .= " no-toggle";
 		}
 
 		$output = sprintf( '<nav class="%s">%s<ul class="%s %s">%s</ul></nav>',

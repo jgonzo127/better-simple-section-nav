@@ -17,6 +17,14 @@ define( 'BSSN_URL', plugin_dir_url( __FILE__ ) );
 // Include general functionality.
 require_once BSSN_PATH . 'functions.php';
 
+// Maybe include admin class.
+if ( is_admin() ) {
+
+	require_once BSSN_PATH . 'classes/class-bssn-admin.php';
+
+	new Bssn_Admin();
+}
+
 add_action( 'wp_enqueue_scripts', 'bssn_scripts_and_styles' );
 /**
  * Enqueue front-end scripts and styles.
@@ -144,14 +152,20 @@ class Better_Simple_Section_Nav extends WP_Widget {
 		$instance = wp_parse_args( (array) $instance, $this->defaults );
 
 		$defaults = array(
-			'title'       => '',
-			'toggle_icon' => 'chevron',
-			'link_title'  => true,
+			'title'       	 => '',
+			'toggle_icon' 	 => 'chevron',
+			'exclude'     	 => '',
+			'link_title'  	 => true,
+			'hide_toggle' 	 => '',
+			'show_sub_pages' => '',
  		);
 
-		$title       = $instance['title'];
-		$toggle_icon = $instance['toggle_icon'];
-		$link_title  = $instance['link_title'];
+		$title       	= $instance['title'];
+		$toggle_icon 	= $instance['toggle_icon'];
+		$exclude     	= $instance['exclude'];
+		$link_title  	= $instance['link_title'];
+		$hide_toggle 	= $instance['hide_toggle'];
+		$show_sub_pages = $instance['show_sub_pages'];
 
 		// Title.
 		$this->field_text(
@@ -175,6 +189,15 @@ class Better_Simple_Section_Nav extends WP_Widget {
 			)
 		);
 
+		// Exclude List.
+		$this->field_text(
+			__( 'Exclude:', 'better-simple-section-nav' ),
+			__( 'Comma separated page IDs', 'better-simple-section-nav' ),
+			'bssn-exclude widefat',
+			'exclude',
+			$exclude
+		);
+
 		// Link Title.
 		$this->field_checkbox(
 			__( 'Link Top Level Page?', 'better-simple-section-nav' ),
@@ -182,6 +205,24 @@ class Better_Simple_Section_Nav extends WP_Widget {
 			'bssn-link-title widefat',
 			'link_title',
 			$link_title
+		);
+
+		// Hide Toggle.
+		$this->field_checkbox(
+			__( 'Hide Toggle Icons?', 'better-simple-section-nav' ),
+			'',
+			'bssn-hide-toggle widefat',
+			'hide_toggle',
+			$hide_toggle
+		);
+
+		// Hide Toggle.
+		$this->field_checkbox(
+			__( 'Show Sub Pages?', 'better-simple-section-nav' ),
+			'',
+			'bssn-show-subpages widefat',
+			'show_sub_pages',
+			$show_sub_pages
 		);
 	}
 
@@ -196,10 +237,13 @@ class Better_Simple_Section_Nav extends WP_Widget {
 	 */
 	public function update( $new_instance, $old_instance ) {
 
-		$instance                = $old_instance;
-		$instance['title']       = wp_kses_post( $new_instance['title'] );
-		$instance['toggle_icon'] = sanitize_text_field( $new_instance['toggle_icon'] );
-		$instance['link_title']  = sanitize_text_field( $new_instance['link_title'] );
+		$instance                	= $old_instance;
+		$instance['title']       	= wp_kses_post( $new_instance['title'] );
+		$instance['toggle_icon'] 	= sanitize_text_field( $new_instance['toggle_icon'] );
+		$instance['exclude']     	= sanitize_text_field( $new_instance['exclude'] );
+		$instance['link_title']  	= sanitize_text_field( $new_instance['link_title'] );
+		$instance['hide_toggle'] 	= sanitize_text_field( $new_instance['hide_toggle'] );
+		$instance['show_sub_pages'] = sanitize_text_field( $new_instance['show_sub_pages'] );
 
 		return $instance;
 	}
@@ -349,133 +393,4 @@ class Better_Simple_Section_Nav extends WP_Widget {
 		echo '</p>';
 	}
 
-	/**
-	 * Output a group of checkboxes.
-	 *
-	 * @since  1.0.0
-	 */
-	public function field_multi_checkbox( $label = '', $description = '', $classes = '', $key = '', $value = '', $options = array() ) {
-
-		if ( ! is_array( $value ) ) {
-			$values = ( strpos( $value, ',' ) ) ? explode( ',', $value ) : (array)$value;
-		} else {
-			$values = $value;
-		}
-
-		echo '<p class="bssn-multi-checkbox-field-wrap">';
-
-			echo '<label class="multi-checkbox-group-label">' . esc_html( $label ) . '</label><br />';
-
-			echo '<span class="bssn-multi-checkbox-wrap">';
-
-			// Test whether we have an associative or indexed array.
-			if ( array_values( $options ) === $options ) {
-
-				// We have an indexed array.
-				foreach ( $options as $option_value ) {
-
-					$val = ( in_array( $option_value, $values ) ) ? 1 : 0;
-					$option_display_name = ucwords( str_replace( '_', ' ', $option_value ) );
-
-					printf(
-						'<input type="checkbox" class="%s" value="%s" %s /> <label class="%s">%s</label><br />',
-						esc_attr( $classes ),
-						esc_attr( $option_value ),
-						checked( $val, 1, false ),
-						'multi-checkbox-label',
-						esc_html( $option_display_name )
-					);
-				}
-
-			} else {
-
-				// We have an associative array.
-				foreach ( $options as $option_value => $option_display_name ) {
-
-					$val = ( in_array( $option_value, $values ) ) ? 1 : 0;
-
-					printf(
-						'<input type="checkbox" class="%s" value="%s" %s /> <label class="%s">%s</label><br />',
-						esc_attr( $classes ),
-						esc_attr( $option_value ),
-						checked( $val, 1, false ),
-						'multi-checkbox-label',
-						esc_html( $option_display_name )
-					);
-				}
-			}
-
-			printf(
-				'<input type="hidden" class="%s" name="%s" value="%s" />',
-				'multi-checkbox-hidden-input',
-				$this->get_field_name( $key ),
-				esc_attr( (string)$value )
-			);
-
-			echo '</span>';
-
-			if ( '' !== $description) {
-				printf(
-					'<small class="bssn-description-text">%s</small>',
-					esc_html( $description )
-				);
-			}
-
-		echo '</p>';
-	}
-
-	/**
-	 * Output a group of radio buttons.
-	 *
-	 * @since  1.0.0
-	 */
-	public function field_radio( $label = '', $description = '', $classes = '', $key = '', $value = '', $options = array() ) {
-
-		echo '<p class="bssn-radio-field-wrap">';
-
-			echo '<label class="radio-group-label">' . esc_html( $label ) . '</label><br />';
-
-			// Test whether we have an associative or indexed array.
-			if ( array_values( $options ) === $options ) {
-
-				// We have an indexed array.
-				foreach ( $options as $option ) {
-
-					printf(
-						'<input type="radio" class="%s" name="%s" value="%s" %s /> <label class="%s">%s</label><br />',
-						esc_attr( $classes ),
-						$this->get_field_name( $key ),
-						esc_attr( $option ),
-						checked( $value, $option, false ),
-						'radio-option-label',
-						esc_html( $option )
-					);
-				}
-
-			} else {
-
-				// We have an associative array.
-				foreach ( $options as $option_value => $option_display_name ) {
-
-					printf(
-						'<input type="radio" class="%s" name="%s" value="%s" %s /> <label class="%s">%s</label><br />',
-						esc_attr( $classes ),
-						$this->get_field_name( $key ),
-						esc_attr( $option_value ),
-						checked( $value, $option_value, false ),
-						'radio-option-label',
-						esc_html( $option_display_name )
-					);
-				}
-			}
-
-			if ( '' !== $description) {
-				printf(
-					'<small class="bssn-description-text">%s</small>',
-					esc_html( $description )
-				);
-			}
-
-		echo '</p>';
-	}
 }
