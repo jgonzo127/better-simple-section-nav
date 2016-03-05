@@ -125,6 +125,15 @@ class Better_Simple_Section_Nav extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 
+		$defaults = array(
+			'title'       	 => '',
+			'toggle_icon' 	 => '',
+			'exclude'     	 => '',
+			'link_title'  	 => '',
+			'hide_toggle' 	 => '',
+			'show_sub_pages' => '',
+ 		);
+
 		// At this point, all instance options have been sanitized.
 		$title = apply_filters( 'widget_title', $instance['title'] );
 
@@ -149,8 +158,6 @@ class Better_Simple_Section_Nav extends WP_Widget {
 	 */
 	public function form( $instance ) {
 
-		$instance = wp_parse_args( (array) $instance, $this->defaults );
-
 		$defaults = array(
 			'title'       	 => '',
 			'toggle_icon' 	 => 'chevron',
@@ -159,6 +166,8 @@ class Better_Simple_Section_Nav extends WP_Widget {
 			'hide_toggle' 	 => '',
 			'show_sub_pages' => '',
  		);
+
+ 		$instance = wp_parse_args( (array) $instance, $defaults );
 
 		$title       	= $instance['title'];
 		$toggle_icon 	= $instance['toggle_icon'];
