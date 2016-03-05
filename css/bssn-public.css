@@ -4,6 +4,10 @@
     position: relative;
 }
 
+.bssn-top-level ul {
+  padding-left: 1.25em;
+}
+
 .children.bssn-sub-level {
     display: none;
 }
